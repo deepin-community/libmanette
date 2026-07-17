@@ -29,21 +29,10 @@ G_BEGIN_DECLS
 
 #define MANETTE_TYPE_EVENT (manette_event_get_type())
 
-#define MANETTE_TYPE_EVENT_TYPE (manette_event_type_get_type ())
+#define MANETTE_TYPE_EVENT_TYPE (manette_event_type_get_type())
 
 typedef union  _ManetteEvent ManetteEvent;
 
-/**
- * ManetteEventType:
- * @MANETTE_EVENT_NOTHING: a special code to indicate a null event
- * @MANETTE_EVENT_BUTTON_PRESS: a button has been pressed
- * @MANETTE_EVENT_BUTTON_RELEASE: a button has been released
- * @MANETTE_EVENT_ABSOLUTE: an absolute axis has been moved
- * @MANETTE_EVENT_HAT: a hat axis has been moved
- * @MANETTE_LAST_EVENT: the number of event types
- *
- * Specifies the type of the event.
- */
 typedef enum {
   MANETTE_EVENT_NOTHING = -1,
   MANETTE_EVENT_BUTTON_PRESS = 0,
@@ -69,7 +58,7 @@ gboolean manette_event_get_button (const ManetteEvent *self,
                                    guint16            *button);
 gboolean manette_event_get_absolute (const ManetteEvent *self,
                                      guint16            *axis,
-                                     gdouble            *value);
+                                     double             *value);
 gboolean manette_event_get_hat (const ManetteEvent *self,
                                 guint16            *axis,
                                 gint8              *value);

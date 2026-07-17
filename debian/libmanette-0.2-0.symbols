@@ -1,7 +1,20 @@
 libmanette-0.2.so.0 libmanette-0.2-0 #MINVER#
 * Build-Depends-Package: liblibmanette-0.2-dev
+ manette_backend_emit_event@Base 0.2.11
+ manette_backend_get_bustype_id@Base 0.2.11
+ manette_backend_get_name@Base 0.2.11
+ manette_backend_get_product_id@Base 0.2.11
+ manette_backend_get_type@Base 0.2.11
+ manette_backend_get_vendor_id@Base 0.2.11
+ manette_backend_get_version_id@Base 0.2.11
+ manette_backend_has_input@Base 0.2.11
+ manette_backend_has_rumble@Base 0.2.11
+ manette_backend_initialize@Base 0.2.11
+ manette_backend_rumble@Base 0.2.11
  manette_device_get_bustype_id@Base 0.1.2
+ manette_device_get_device_type@Base 0.2.11
  manette_device_get_guid@Base 0.1.2
+ manette_device_get_mapping@Base 0.2.9
  manette_device_get_name@Base 0.1.2
  manette_device_get_product_id@Base 0.1.2
  manette_device_get_type@Base 0.1.2
@@ -15,6 +28,12 @@ libmanette-0.2.so.0 libmanette-0.2-0 #MINVER#
  manette_device_rumble@Base 0.2.0
  manette_device_save_user_mapping@Base 0.1.2
  manette_device_set_mapping@Base 0.1.2
+ manette_device_supports_mapping@Base 0.2.11
+ manette_device_type_get_type@Base 0.2.11
+ manette_device_type_guess@Base 0.2.11
+ manette_evdev_backend_get_type@Base 0.2.11
+ manette_evdev_backend_has_input@Base 0.2.11
+ manette_evdev_backend_new@Base 0.2.11
  manette_event_copy@Base 0.1.2
  manette_event_free@Base 0.1.2
  manette_event_get_absolute@Base 0.1.2
@@ -30,6 +49,21 @@ libmanette-0.2.so.0 libmanette-0.2-0 #MINVER#
  manette_event_get_type@Base 0.1.2
  manette_event_new@Base 0.1.2
  manette_event_type_get_type@Base 0.1.2
+ manette_get_major_version@Base 0.2.11
+ manette_get_micro_version@Base 0.2.11
+ manette_get_minor_version@Base 0.2.11
+ manette_hid_backend_get_type@Base 0.2.11
+ manette_hid_backend_has_input@Base 0.2.11
+ manette_hid_backend_new@Base 0.2.11
+ manette_hid_driver_emit_event@Base 0.2.11
+ manette_hid_driver_get_name@Base 0.2.11
+ manette_hid_driver_get_poll_rate@Base 0.2.11
+ manette_hid_driver_get_type@Base 0.2.11
+ manette_hid_driver_has_input@Base 0.2.11
+ manette_hid_driver_has_rumble@Base 0.2.11
+ manette_hid_driver_initialize@Base 0.2.11
+ manette_hid_driver_poll@Base 0.2.11
+ manette_hid_driver_rumble@Base 0.2.11
  manette_map_event@Base 0.2.2
  manette_mapping_binding_copy@Base 0.1.2
  manette_mapping_binding_free@Base 0.1.2
@@ -41,6 +75,7 @@ libmanette-0.2.so.0 libmanette-0.2-0 #MINVER#
  manette_mapping_has_destination_input@Base 0.1.2
  manette_mapping_manager_delete_mapping@Base 0.1.2
  manette_mapping_manager_get_default_mapping@Base 0.1.2
+ manette_mapping_manager_get_default_mappings@Base 0.2.9
  manette_mapping_manager_get_mapping@Base 0.1.2
  manette_mapping_manager_get_type@Base 0.1.2
  manette_mapping_manager_get_user_mapping@Base 0.1.2
@@ -56,4 +91,5 @@ libmanette-0.2.so.0 libmanette-0.2-0 #MINVER#
  manette_monitor_iter_next@Base 0.1.2
  manette_monitor_iterate@Base 0.1.2
  manette_monitor_new@Base 0.1.2
-
+ manette_steam_deck_driver_get_type@Base 0.2.11
+ manette_steam_deck_driver_new@Base 0.2.11

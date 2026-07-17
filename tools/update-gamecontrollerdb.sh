@@ -6,6 +6,16 @@ ensure-valid-id () {
   grep -E '^[0-9a-f]{32},'
 }
 
+filter_use_button_labels_hint () {
+  grep -v ',hint:SDL_GAMECONTROLLER_USE_BUTTON_LABELS:=1' | \
+  sed 's|hint:!SDL_GAMECONTROLLER_USE_BUTTON_LABELS:=1,||g'
+}
+
+filter_platform () {
+  grep "platform:Linux" | \
+  sed 's|platform:Linux,||g'
+}
+
 footer () {
   printf "\n" >> $OUTPUT
 }
@@ -22,6 +32,7 @@ printf "# Source: https://github.com/SDL-mirror/SDL/blob/master/src/joystick/SDL
 curl https://raw.githubusercontent.com/SDL-mirror/SDL/master/src/joystick/SDL_gamecontrollerdb.h \
   | awk '/LINUX/{flag=1;next}/endif/{flag=0}flag' \
   | sed -n 's/.*"\(.*\)".*/\1/p' \
+  | filter_use_button_labels_hint \
   | ensure-valid-id | sort >> $OUTPUT
 
 footer
@@ -31,8 +42,7 @@ printf "# Source: https://github.com/gabomdq/SDL_GameControllerDB/blob/master/ga
 
 # Add the GameControllerDB
 curl https://raw.githubusercontent.com/gabomdq/SDL_GameControllerDB/master/gamecontrollerdb.txt \
-  | grep "platform:Linux" \
-  | sed 's/platform:Linux,//' \
+  | filter_platform \
   | ensure-valid-id | sort >> $OUTPUT
 
 footer

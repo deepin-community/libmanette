@@ -7,14 +7,21 @@ libmanette_resources = gnome.compile_resources(
 
 libmanette_sources = [
   libmanette_resources,
+  'drivers/manette-steam-deck-driver.c',
+  'manette-backend.c',
   'manette-device.c',
+  'manette-device-type.c',
+  'manette-evdev-backend.c',
   'manette-event.c',
   'manette-event-mapping.c',
+  'manette-hid-backend.c',
+  'manette-hid-driver.c',
   'manette-mapping.c',
   'manette-mapping-manager.c',
   'manette-mapping-error.c',
   'manette-monitor.c',
   'manette-monitor-iter.c',
+  'manette-version.c',
 ]
 
 libmanette_main_header = 'libmanette.h'
@@ -22,6 +29,7 @@ libmanette_main_header = 'libmanette.h'
 libmanette_headers = [
   libmanette_main_header,
   'manette-device.h',
+  'manette-device-type.h',
   'manette-event.h',
   'manette-monitor.h',
   'manette-monitor-iter.h',
@@ -38,13 +46,13 @@ version_conf.set('MAJOR_VERSION', MAJOR_VERSION)
 version_conf.set('MINOR_VERSION', MINOR_VERSION)
 version_conf.set('MICRO_VERSION', MICRO_VERSION)
 
-configure_file(
+manette_version_h = configure_file(
   input: 'manette-version.h.in',
   output: 'manette-version.h',
-  configuration: version_conf,
-  install: true,
-  install_dir: get_option('includedir') / 'libmanette'
+  configuration: version_conf
 )
+
+libmanette_headers += manette_version_h
 
 libmanette_c_args = [
   '-DMANETTE_COMPILATION',
@@ -55,6 +63,7 @@ libmanette_deps = [
   gio,
   glib,
   gobject,
+  hidapi,
   libevdev,
 ]
 
@@ -63,7 +72,7 @@ if gudev.found()
   libmanette_deps += [ gudev ]
 endif
 
-libmanette_lib = shared_library(
+libmanette_lib = library(
   libmanette_module,
   libmanette_sources,
   c_args: libmanette_c_args,
@@ -75,6 +84,7 @@ libmanette_lib = shared_library(
 
 libmanette_gir_args = [
    '--quiet',
+   '--doc-format=gi-docgen',
 ]
 
 libmanette_gir_includes = [
@@ -88,6 +98,13 @@ endif
 
 built_girs = []
 if get_option('introspection')
+  gir_dep = dependency('gobject-introspection-1.0')
+  if gir_dep.version().version_compare('>=1.83.2')
+    libmanette_gir_args += [
+      '--doc-format=gi-docgen',
+    ]
+  endif
+
   libmanette_gir = gnome.generate_gir(
     libmanette_lib,
     extra_args: libmanette_gir_args,
