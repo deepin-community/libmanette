@@ -16,6 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "config.h"
+
 #include "manette-mapping-private.h"
 
 #include <errno.h>
@@ -113,8 +115,8 @@ bindings_array_has_destination_input (GArray *array,
 }
 
 static gboolean
-try_str_to_guint16 (gchar    *start,
-                    gchar   **end,
+try_str_to_guint16 (char     *start,
+                    char    **end,
                     guint16  *result)
 {
   manette_ensure_is_parseable (start);
@@ -128,8 +130,8 @@ try_str_to_guint16 (gchar    *start,
 }
 
 static gboolean
-parse_mapping_input_type (gchar                    *start,
-                          gchar                   **end,
+parse_mapping_input_type (char                     *start,
+                          char                    **end,
                           ManetteMappingInputType  *input_type)
 {
   manette_ensure_is_parseable (start);
@@ -158,16 +160,16 @@ parse_mapping_input_type (gchar                    *start,
 }
 
 static gboolean
-parse_mapping_index (gchar    *start,
-                     gchar   **end,
+parse_mapping_index (char     *start,
+                     char    **end,
                      guint16  *index)
 {
   return try_str_to_guint16 (start, end, index);
 }
 
 static gboolean
-parse_mapping_invert (gchar     *start,
-                      gchar    **end,
+parse_mapping_invert (char      *start,
+                      char     **end,
                       gboolean  *invert)
 {
   manette_ensure_is_parseable (start);
@@ -188,8 +190,8 @@ parse_mapping_invert (gchar     *start,
 }
 
 static gboolean
-parse_mapping_range (gchar                *start,
-                     gchar               **end,
+parse_mapping_range (char                 *start,
+                     char                **end,
                      ManetteMappingRange  *range)
 {
   manette_ensure_is_parseable (start);
@@ -216,8 +218,8 @@ parse_mapping_range (gchar                *start,
 }
 
 static gboolean
-parse_mapping_hat (gchar                *start,
-                   gchar               **end,
+parse_mapping_hat (char                 *start,
+                   char                **end,
                    guint16              *index,
                    ManetteMappingRange  *range,
                    gboolean             *invert)
@@ -265,15 +267,15 @@ parse_mapping_hat (gchar                *start,
 }
 
 static gboolean
-parse_destination_input (gchar    *start,
-                         gchar   **end,
+parse_destination_input (char     *start,
+                         char    **end,
                          guint16  *type,
                          guint16  *code)
 {
   const static struct {
     guint16 type;
     guint16 code;
-    const gchar *string_value;
+    const char *string_value;
   } values[] = {
     { EV_ABS, ABS_X, "leftx" },
     { EV_ABS, ABS_Y, "lefty" },
@@ -296,9 +298,20 @@ parse_destination_input (gchar    *start,
     { EV_KEY, BTN_TR2, "righttrigger" },
     { EV_KEY, BTN_Y, "x" },
     { EV_KEY, BTN_X, "y" },
+    { EV_KEY, BTN_TRIGGER_HAPPY2, "paddle1" },
+    { EV_KEY, BTN_TRIGGER_HAPPY1, "paddle2" },
+    { EV_KEY, BTN_TRIGGER_HAPPY4, "paddle3" },
+    { EV_KEY, BTN_TRIGGER_HAPPY3, "paddle4" },
+    { EV_KEY, BTN_TRIGGER_HAPPY5, "misc1" },
+    { EV_KEY, BTN_TRIGGER_HAPPY6, "misc2" },
+    { EV_KEY, BTN_TRIGGER_HAPPY7, "misc3" },
+    { EV_KEY, BTN_TRIGGER_HAPPY8, "misc4" },
+    { EV_KEY, BTN_TRIGGER_HAPPY9, "misc5" },
+    { EV_KEY, BTN_TRIGGER_HAPPY10, "misc6" },
+    { EV_KEY, BTN_TRIGGER_HAPPY11, "touchpad" },
   };
-  const gint length = sizeof (values) / sizeof (values[0]);
-  gint i;
+  const int length = sizeof (values) / sizeof (values[0]);
+  int i;
 
   for (i = 0; i < length; i++)
     if (g_strcmp0 (start, values[i].string_value) == 0) {
@@ -343,7 +356,7 @@ append_binding (GArray                *type_array,
 }
 
 static gboolean
-parse_mapping_destination (gchar                 *destination,
+parse_mapping_destination (char                  *destination,
                            ManetteMappingBinding *binding)
 {
   if (!parse_mapping_range (destination,
@@ -364,7 +377,7 @@ parse_mapping_destination (gchar                 *destination,
 }
 
 static gboolean
-parse_mapping_source (gchar                 *source,
+parse_mapping_source (char                  *source,
                       ManetteMappingBinding *binding)
 {
   if (!parse_mapping_range (source,
@@ -425,7 +438,7 @@ parse_mapping_source (gchar                 *source,
 }
 
 static gboolean
-is_valid_guid (const gchar *string)
+is_valid_guid (const char *string)
 {
   if (!string)
     return FALSE;
@@ -441,24 +454,33 @@ is_valid_guid (const gchar *string)
  * setting it.
  */
 static void
-set_from_mapping_string (ManetteMapping *self,
-                         const gchar    *mapping_string)
+set_from_mapping_string (ManetteMapping  *self,
+                         const char      *mapping_string,
+                         GError         **error)
 {
   g_auto(GStrv) mappings = g_strsplit (mapping_string, ",", 0);
   guint mappings_length = g_strv_length (mappings);
   guint i = 0;
-  gchar *destination_string;
-  gchar *source_string;
+  char *destination_string;
+  char *source_string;
   ManetteMappingBinding binding = {};
 
   if (mappings_length < 2) {
-    g_critical ("Invalid mapping string: %s", mapping_string);
+    g_set_error (error,
+                 MANETTE_MAPPING_ERROR,
+                 MANETTE_MAPPING_ERROR_NOT_A_MAPPING,
+                 "Invalid mapping string: %s",
+                 mapping_string);
 
     return;
   }
 
   if (!is_valid_guid (mappings[0])) {
-    g_critical ("Invalid mapping string: no GUID: %s", mapping_string);
+    g_set_error (error,
+                 MANETTE_MAPPING_ERROR,
+                 MANETTE_MAPPING_ERROR_NOT_A_MAPPING,
+                 "Invalid mapping string: no GUID: %s",
+                 mapping_string);
 
     return;
   }
@@ -477,19 +499,19 @@ set_from_mapping_string (ManetteMapping *self,
       continue;
 
     if (!parse_mapping_destination (destination_string, &binding)) {
-      g_debug ("Invalid binding destination: %s:%s in %s", destination_string, source_string, mapping_string);
+      g_critical ("Invalid binding destination: %s:%s in %s", destination_string, source_string, mapping_string);
 
       continue;
     }
 
     if  (binding.destination.type == EV_MAX) {
-      g_debug ("Invalid token: %s", destination_string);
+      g_critical ("Invalid token: %s", destination_string);
 
       continue;
     }
 
     if (!parse_mapping_source (source_string, &binding)) {
-      g_debug ("Invalid binding source: %s:%s in %s", destination_string, source_string, mapping_string);
+      g_critical ("Invalid binding source: %s:%s in %s", destination_string, source_string, mapping_string);
 
       continue;
     }
@@ -521,10 +543,11 @@ g_array_try_free (GArray **array)
 }
 
 ManetteMapping *
-manette_mapping_new (const gchar  *mapping_string,
+manette_mapping_new (const char   *mapping_string,
                      GError      **error)
 {
-  ManetteMapping *self = NULL;
+  g_autoptr (ManetteMapping) self = NULL;
+  GError *inner_error = NULL;
 
   if (mapping_string == NULL) {
     g_set_error_literal (error,
@@ -553,9 +576,14 @@ manette_mapping_new (const gchar  *mapping_string,
   self->hat_bindings = g_array_new (FALSE, TRUE, sizeof (GArray *));
   g_array_set_clear_func (self->hat_bindings, (GDestroyNotify) g_array_try_free);
 
-  set_from_mapping_string (self, mapping_string);
+  set_from_mapping_string (self, mapping_string, &inner_error);
+  if (G_UNLIKELY (inner_error != NULL)) {
+    g_propagate_error (error, inner_error);
 
-  return self;
+    return NULL;
+  }
+
+  return g_steal_pointer (&self);
 }
 
 const ManetteMappingBinding * const *

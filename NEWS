@@ -1,3 +1,59 @@
+==============
+Version 0.2.12
+==============
+
+- Add a deadzone for Steam Deck analog sticks
+- Fix build with older gobject-introspection
+
+==============
+Version 0.2.11
+==============
+
+- Port documentation to gi-docgen
+- Add support for Steam Deck gamepad
+  - Add ManetteDeviceType and manette_device_get_device_type()
+  - Add manette_device_supports_mapping()
+- Deprecate LIBMANETTE_* version check symbols, add MANETTE_* instead
+- Add runtime version check functions
+- Make hat to buttons mapping always emit button release
+  (fixes d-pad getting stuck when quickly flipping right->left etc)
+- Fix paddle keycodes
+- Fix DualSense motion sensor and touchpad being recognized as gamepads
+- Fix half-range axis mappings
+- Build
+  - Depend on hidapi-hidraw
+  - Specify --doc-format for GIR data
+  - Fix build warnings
+
+=============
+Version 0.2.9
+=============
+
+* Update and clean up the game controller mapping database
+* ManetteDevice
+ - add manette_device_get_mapping() and manette_device_get_guid()
+ - Handle keycodes before BTN_MISC as well
+* ManetteMapping
+ - Allow to map paddle1-4, misc1-6 and touchpad buttons
+ - Improve error handling
+* ManetteMappingManager
+ - Check if user mapping file exists
+* Tests
+ - Test default mappings
+
+=============
+Version 0.2.7
+=============
+
+* Allow building as a static library
+* ManetteMappingManager:
+ - Strip leading and trailing spaces from mappings
+* ManetteMonitor
+ - Always use file backend in Flatpak
+ - Skip non-evdev devices
+ - Fix object construction
+* Various cleanups
+
 =============
 Version 0.2.6
 =============

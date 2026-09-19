@@ -1,6 +1,6 @@
-/* manette-device-private.h
+/* manette-device-type.h
  *
- * Copyright (C) 2017 Adrien Plazas <kekun.plazas@laposte.net>
+ * Copyright (C) 2024 Alice Mikhaylenko <alicem@gnome.org>
  *
  * This file is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -18,23 +18,21 @@
 
 #pragma once
 
-#if !defined(MANETTE_COMPILATION)
+#if !defined(__MANETTE_INSIDE__) && !defined(MANETTE_COMPILATION)
 # error "This file is private, only <libmanette.h> can be included directly."
 #endif
 
-#include "manette-device.h"
-#include "manette-backend-private.h"
-#include "manette-mapping-private.h"
+#include <glib-object.h>
 
 G_BEGIN_DECLS
 
-ManetteDevice *manette_device_new (ManetteBackend  *backend,
-                                   GError         **error);
-int manette_device_get_product_id (ManetteDevice *self);
-int manette_device_get_vendor_id (ManetteDevice *self);
-int manette_device_get_bustype_id (ManetteDevice *self);
-int manette_device_get_version_id (ManetteDevice *self);
-void manette_device_set_mapping (ManetteDevice  *self,
-                                 ManetteMapping *mapping);
+#define MANETTE_TYPE_DEVICE_TYPE (manette_device_type_get_type())
+
+GType manette_device_type_get_type (void);
+
+typedef enum {
+  MANETTE_DEVICE_GENERIC,
+  MANETTE_DEVICE_STEAM_DECK,
+} ManetteDeviceType;
 
 G_END_DECLS

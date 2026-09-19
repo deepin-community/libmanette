@@ -16,25 +16,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * SECTION:manette-event
- * @short_description: An event emitted by a device
- * @title: ManetteEvent
- * @See_also: #ManetteDevice
- */
+#include "config.h"
 
 #include "manette-event-private.h"
 
 #include <string.h>
+
+/**
+ * ManetteEventType:
+ * @MANETTE_EVENT_NOTHING: a special code to indicate a null event
+ * @MANETTE_EVENT_BUTTON_PRESS: a button has been pressed
+ * @MANETTE_EVENT_BUTTON_RELEASE: a button has been released
+ * @MANETTE_EVENT_ABSOLUTE: an absolute axis has been moved
+ * @MANETTE_EVENT_HAT: a hat axis has been moved
+ * @MANETTE_LAST_EVENT: the number of event types
+ *
+ * Specifies the type of the event.
+ */
+
+G_DEFINE_ENUM_TYPE (ManetteEventType, manette_event_type,
+  G_DEFINE_ENUM_VALUE (MANETTE_EVENT_NOTHING, "event-nothing"),
+  G_DEFINE_ENUM_VALUE (MANETTE_EVENT_BUTTON_PRESS, "event-button-press"),
+  G_DEFINE_ENUM_VALUE (MANETTE_EVENT_BUTTON_RELEASE, "event-button-release"),
+  G_DEFINE_ENUM_VALUE (MANETTE_EVENT_ABSOLUTE, "event-absolute"),
+  G_DEFINE_ENUM_VALUE (MANETTE_EVENT_HAT, "event-hat"))
+
+/**
+ * ManetteEvent:
+ *
+ * An event emitted by a [class@Device].
+ */
 
 G_DEFINE_BOXED_TYPE (ManetteEvent, manette_event, manette_event_copy, manette_event_free)
 
 /**
  * manette_event_new:
  *
- * Creates a new #ManetteEvent.
+ * Creates a new [union@Event].
  *
- * Returns: (transfer full): a new #ManetteEvent
+ * Returns: (transfer full): a new event
  */
 ManetteEvent *
 manette_event_new (void)
@@ -44,11 +64,11 @@ manette_event_new (void)
 
 /**
  * manette_event_copy: (skip)
- * @self: a #ManetteEvent
+ * @self: an event
  *
- * Creates a copy of a #ManetteEvent.
+ * Creates a copy of @self.
  *
- * Returns: (transfer full): a new #ManetteEvent
+ * Returns: (transfer full): a new event
  */
 ManetteEvent *
 manette_event_copy (const ManetteEvent *self)
@@ -67,7 +87,7 @@ manette_event_copy (const ManetteEvent *self)
 
 /**
  * manette_event_free: (skip)
- * @self: a #ManetteEvent
+ * @self: an event
  *
  * Frees @self.
  */
@@ -83,7 +103,7 @@ manette_event_free (ManetteEvent *self)
 
 /**
  * manette_event_get_event_type:
- * @self: a #ManetteEvent
+ * @self: an event
  *
  * Gets the event type of @self.
  *
@@ -99,11 +119,13 @@ manette_event_get_event_type (const ManetteEvent *self)
 
 /**
  * manette_event_get_time:
- * @self: a #ManetteEvent
+ * @self: an event
  *
  * Gets the timestamp of when @self was received by the input driver that takes
- * care of its device. Use this timestamp to ensure external factors such as
- * synchronous disk writes don't influence your timing computations.
+ * care of its device.
+ *
+ * Use this timestamp to ensure external factors such as synchronous disk writes
+ * don't influence your timing computations.
  *
  * Returns: the timestamp of when @self was received by the input driver
  */
@@ -117,11 +139,11 @@ manette_event_get_time (const ManetteEvent *self)
 
 /**
  * manette_event_get_device:
- * @self: a #ManetteEvent
+ * @self: an event
  *
- * Gets the #ManetteDevice associated with the @self.
+ * Gets the [class@Device] associated with the @self.
  *
- * Returns: (transfer none): the #ManetteDevice associated with the @self
+ * Returns: (transfer none): the device associated with the @self
  */
 ManetteDevice *
 manette_event_get_device (const ManetteEvent *self)
@@ -133,7 +155,7 @@ manette_event_get_device (const ManetteEvent *self)
 
 /**
  * manette_event_get_hardware_type:
- * @self: a #ManetteEvent
+ * @self: an event
  *
  * Gets the hardware type of @self.
  *
@@ -149,7 +171,7 @@ manette_event_get_hardware_type (const ManetteEvent *self)
 
 /**
  * manette_event_get_hardware_code:
- * @self: a #ManetteEvent
+ * @self: an event
  *
  * Gets the hardware code of @self.
  *
@@ -165,7 +187,7 @@ manette_event_get_hardware_code (const ManetteEvent *self)
 
 /**
  * manette_event_get_hardware_value:
- * @self: a #ManetteEvent
+ * @self: an event
  *
  * Gets the hardware value of @self.
  *
@@ -181,7 +203,7 @@ manette_event_get_hardware_value (const ManetteEvent *self)
 
 /**
  * manette_event_get_hardware_index:
- * @self: a #ManetteEvent
+ * @self: an event
  *
  * Gets the hardware index of @self.
  *
@@ -197,7 +219,7 @@ manette_event_get_hardware_index (const ManetteEvent *self)
 
 /**
  * manette_event_get_button:
- * @self: a #ManetteEvent
+ * @self: an event
  * @button: (out): return location for the button
  *
  * Gets the button of @self, if any.
@@ -224,9 +246,9 @@ manette_event_get_button (const ManetteEvent *self,
 
 /**
  * manette_event_get_absolute:
- * @self: a #ManetteEvent
+ * @self: an event
  * @axis: (out): return location for the axis
- * @value: (out): return location for the axis
+ * @value: (out): return location for the axis value
  *
  * Gets the axis of @self, if any.
  *
@@ -235,7 +257,7 @@ manette_event_get_button (const ManetteEvent *self,
 gboolean
 manette_event_get_absolute (const ManetteEvent *self,
                             guint16            *axis,
-                            gdouble            *value)
+                            double             *value)
 {
   g_return_val_if_fail (self, FALSE);
   g_return_val_if_fail (axis, FALSE);
@@ -254,9 +276,9 @@ manette_event_get_absolute (const ManetteEvent *self,
 
 /**
  * manette_event_get_hat:
- * @self: a #ManetteEvent
+ * @self: an event
  * @axis: (out): return location for the hat
- * @value: (out): return location for the hat
+ * @value: (out): return location for the hat value
  *
  * Gets the hat of @self, if any.
  *
@@ -280,28 +302,4 @@ manette_event_get_hat (const ManetteEvent *self,
   default:
     return FALSE;
   }
-}
-
-GType
-manette_event_type_get_type (void)
-{
-  static volatile gsize manette_event_type_type = 0;
-
-  if (g_once_init_enter (&manette_event_type_type)) {
-    static const GEnumValue values[] = {
-      { MANETTE_EVENT_NOTHING, "MANETTE_EVENT_NOTHING", "event-nothing" },
-      { MANETTE_EVENT_BUTTON_PRESS, "MANETTE_EVENT_BUTTON_PRESS", "event-button-press" },
-      { MANETTE_EVENT_BUTTON_RELEASE, "MANETTE_EVENT_BUTTON_RELEASE", "event-button-release" },
-      { MANETTE_EVENT_ABSOLUTE, "MANETTE_EVENT_ABSOLUTE", "event-absolute" },
-      { MANETTE_EVENT_HAT, "MANETTE_EVENT_HAT", "event-hat" },
-      { 0, NULL, NULL },
-    };
-    GType type;
-
-    type = g_enum_register_static ("ManetteEventType", values);
-
-    g_once_init_leave (&manette_event_type_type, type);
-  }
-
-  return manette_event_type_type;
 }

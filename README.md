@@ -19,14 +19,23 @@ The API is inspired by the device and event handling of GDK, so anybody used to
 
 Meson is the buildsystem of libmanette, to build and install it run:
 
-	# meson build
-	# cd build
-	# ninja
-	# ninja install
+```
+meson build
+cd build
+ninja
+ninja install
+```
 
 ## Testing the Library
 
 libmanette comes with the manette-test tool, which will display events
 from game controllers. You can run it from the build directory with:
 
-	# demos/manette-test/manette-test
+```
+demos/manette-test/manette-test
+```
+
+## Code of Conduct
+
+When interacting with the project, the
+[GNOME Code of Conduct](https://conduct.gnome.org/) applies.

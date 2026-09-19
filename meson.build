@@ -1,5 +1,5 @@
 project('libmanette','c',
-  version: '0.2.6',
+  version: '0.2.12',
   meson_version: '>= 0.53.0',
 )
 
@@ -7,6 +7,7 @@ gnome = import('gnome')
 
 prefix = get_option('prefix')
 libexecdir = prefix / get_option('libexecdir')
+datadir = prefix / get_option('datadir')
 
 confinc = include_directories('.')
 srcinc = include_directories('src')
@@ -24,11 +25,12 @@ glib = dependency ('glib-2.0', version: glib_version)
 gobject = dependency ('gobject-2.0', version: glib_version)
 gudev = dependency ('gudev-1.0', version: gudev_version, required : get_option('gudev'))
 libevdev = dependency ('libevdev', version: libevdev_version)
+hidapi = dependency ('hidapi-hidraw')
 
 config_h = configuration_data()
 
 configure_file(
-  output: 'libmanette-config.h',
+  output: 'config.h',
   configuration: config_h,
 )
 
